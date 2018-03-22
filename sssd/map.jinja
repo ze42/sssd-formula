@@ -1,0 +1,23 @@
+{% set sssd = salt['grains.filter_by']({
+    'Debian': {
+        'sssd_config': '/etc/sssd/sssd.conf',
+        'nsswitch_module': 'sss',
+        'nsswitch_config': '/etc/nsswitch.conf',
+        'nsswitch_service': 'nsswitch',
+        'service': 'sssd',
+        'packages': [
+            'sssd',
+            'libnss-sss',
+            'libpam-sss',
+        ],
+    },
+}, merge=salt['pillar.get']('sssd:lookup'))
+%}
+{% set defaults = {
+    'services': ['nss', 'pam', 'ssh', ],
+    'nsswitch': {
+        'configure': True,
+        'databases': ['passwd', 'group', 'shadow', ],
+    },
+}
+%}

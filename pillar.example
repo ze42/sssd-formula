@@ -1,0 +1,52 @@
+sssd:
+  # Override values in map.jinja.
+  lookup:
+    sssd_config: /etc/sssd/sssd.conf
+    nsswitch_module: sss
+    nsswitch_config: /etc/nsswitch.conf
+    nsswitch_service: nsswitch
+    service: sssd
+    packages:
+      - sssd
+      - libnss-sss
+      - libpam-sss
+
+  # Actual configuration
+  config:
+
+    sssd:
+      # Override the list of services value (default: that list)
+      services: [nss, pam, ssh, ]
+
+    nsswitch:
+      # Disable nsswitch configuration here
+      configure: True
+      # Configure nsswitch.conf to have sss for those, and only those databases
+      # Default value presented here.
+      databases: [passwd, group, shadow, ]
+
+
+    # nss and pam directly gets from here to [nss] and [pam] sections
+    nss:
+      key: value
+    pam:
+      key: value
+
+    domains:
+      # Each key will be used in [sssd] domains.
+      example.com:
+        # This list directly gets into [domain/<name>] key: value
+        id_provider: ldap
+        auth_provider: ldap
+        chpass_provider: ldap
+        ldap_uri: ldaps://ldap.example.com
+
+        ldap_default_bind_dn: cn=sssd,ou=services,dc=example,dc=com
+        ldap_default_authtok: mysecretpassword
+        ldap_default_auth_type: password
+
+        ldap_search_base: dc=example,dc=com
+        ldap_user_search_base: ou=users,dc=example,dc=com
+        ldap_group_search_base: ou=groups,dc=example,dc=com
+
+        ldap_user_ssh_public_key: sshPublicKey
