@@ -7,6 +7,8 @@ sssd_config:
   file.managed:
     - name: {{ sssd.sssd_config }}
     - template: jinja
+    - mode: 600
+    - user: root
     - source: salt://{{ slspath }}/files/sssd.conf
     - require:
       - sls: sssd.packages
